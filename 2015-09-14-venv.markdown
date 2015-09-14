@@ -1,0 +1,7 @@
+---
+layout: post
+title: "Venv"
+date: 2015-09-14 06:49:55 +0000
+comments: true
+categories: Python
+---
