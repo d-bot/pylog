@@ -1,0 +1,13 @@
+---
+layout: post
+title: "TIL"
+date: 2015-09-14 06:49:55 +0000
+comments: true
+categories: Python
+---
+
+### VirtualEnv
+http://pythoninreal.blogspot.com/2013/12/virtualenv.html
+
+### TIL
+Python always return None as the result of a statement unless it explicitly return value
