@@ -1,0 +1,24 @@
+---
+layout: post
+title: "Math"
+date: 2015-09-14 07:26:38 +0000
+comments: true
+categories: Python
+---
+
+### Logarithms and Exponentials
+
+Log fuction is to note taht it is the inverse of a corresponding exponential fuction. log2(32) = 5 since 2 ** 5 = 32.
+
+```python
+import math
+print math.log(32, 2)
+>>> 5.0
+# 상용로그
+print math.log10(12)
+```
+
+f 와 g 라는 두 함수가 g(f(x)) = x 라는 조건을 만족시키면 서로 INVERSE 관계에 있다고 할수 있다. For exponentials(지수 함수) and logariths(로그 함수)는 아래 조건을 만족 시키면 INVERSE 관계에 있다고 할수 있다. log c (C **x ) = x
+
+
+
