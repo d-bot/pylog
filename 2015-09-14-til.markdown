@@ -231,4 +231,26 @@ is a shortcut for issubclass(X, A) or issubclass(X, B) or ... (etc.).
 
 마지막으로 쉘에서 `pydoc 모듈/함수` 를 입력하면 그에 따른 문서들을 얻을 수 있다.
 
+[cokbook](https://twitter.com/pythoncookbook)
+
+### Write to STDERR
+
+```python
+sys.stderr.write('An error')
+raise SystemExit(1)
+
+#can be replaced by:
+
+raise SystemExit('An error')
+```
+
+### Write to a file only if it doesn't exist
+
+```python
+with open('name', 'xt') as f:
+  f.write('Hello\n')
+
+Exception if file exists.
+```
+
 
