@@ -253,4 +253,6 @@ with open('name', 'xt') as f:
 Exception if file exists.
 ```
 
+### Prefer exceptions over returning none from a function
+
 
