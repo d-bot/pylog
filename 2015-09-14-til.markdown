@@ -8,6 +8,7 @@ categories: Python
 
 ### VirtualEnv
 [virtualenv](http://pythoninreal.blogspot.com/2013/12/virtualenv.html)
+[FAQ](http://www.pamno.com/b/most-frequent-python-problems-and-solution-cm578/)
 
 ### None
 Python always return None as the result of a statement unless it explicitly return value
