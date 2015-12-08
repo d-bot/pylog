@@ -8,12 +8,16 @@ categories:
 
 [namedtuple](https://www.reddit.com/r/Python/comments/3qw7m4/improving_your_code_readability_with_namedtuples/)
 
+
 [getitem](http://blog.weirdx.io/python-__getitem__과-slice의-이해/)
 
-```python
-import collections
+### Ruby 의 `include Enumerable` 과 비슷
 
-Card = collections.namedtuple('Card', ['rank', 'suit'])
+```python
+from collections import namedtuple
+from random import choice
+
+Card = namedtuple('Card', ['rank', 'suit'])
 
 class FrenchDeck:
   ranks = [ str(n) for n in range(2, 11) ] + list('JQKA')
@@ -33,8 +37,17 @@ class FrenchDeck:
 
 deck = FrenchDeck()
 print len(deck)
+print choice(deck)
 
-#>>> 52
+
+suit_values = dict(spades=3, hearts=2, diamonds=1, clubs=0)
+
+def spades_high(card):
+  rank_index = FrenchDeck.ranks.index(card.ranks)
+  return rank_index * len(suit_values) + suit_values[card.suits]
+
+for i in sorted(deck, key=spades_high)
+  print i
 
 ```
 
@@ -71,7 +84,7 @@ Card(rank='Q', suit='hearts')
 
 ```
 
-
+### 즉, 이런 special methods 들은 유저가 아닌 python interpreter 에 의해서 호출되는 함수들이다. 너는 `len(my_obj)` 라고 쓰고 인터프리터는 `my_obj.__len__()` 이렇게 호출한다. 이런 special method 를 직접 호출하는 경우는 메타 프로그래밍시 많이 발생한다.
 
 
 
