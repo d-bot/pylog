@@ -87,7 +87,15 @@ Card(rank='Q', suit='hearts')
 ### 즉, 이런 special methods 들은 유저가 아닌 python interpreter 에 의해서 호출되는 함수들이다. 너는 `len(my_obj)` 라고 쓰고 인터프리터는 `my_obj.__len__()` 이렇게 호출한다. 이런 special method 를 직접 호출하는 경우는 메타 프로그래밍시 많이 발생한다.
 
 
+If you only implement one of these special methods, choose `__repr__`, because when no custom `__str__` is available, Python will call `__repr__` as a fallback
+
+[differences between __str__ and __repr__](http://stackoverflow.com/questions/1436703/difference-between-str-and-repr-in-python)
 
 
+## Summary
 
+- By implementing special methods, your objects can behave like the built-in types, enabling the expressive coding style the community considers Pythonic.
+- A bsic requirement for a Python object is to provide usable representations of itself, one used for debugging and logging, another for presentation to end users. That is why the special methods `__repr__` and `__str__` exist in the data model.
+- Emulating sequences, as shown with the FrenchDeck example, is one of the most widely used applications of the special methods.
+- Thanks to operator overloading, Python offers a rich selection of numeric types, from the built-ins to decimal.Decimal and fractions.Fraction, all supporting infix arithmetic operators.
 
