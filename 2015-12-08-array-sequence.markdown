@@ -189,20 +189,131 @@ OrderedDict([('name', 'Delhi NCR'), ('country', 'IN'), ('population', 21.935), (
 Immutable variation of list 로서 튜플은 튜플 안의 아이템들을 add/remove 하는 함수들 제외하고는 대부분 list 와 동일한 함수를 가지고 있다. (exception - tuple lacks the `__reversed__`)
 
 
-
-
-
 ## Slicing
 
+슬라이스는 `[START : STOP : STEP]` 의 형식으로 동작하며 파이썬 내부에서는 `seq.__getitem__(slice(start, stop, step))` 을 호출한다.
 
 
+```python
+>>> s = 'bicycle'
+>>> s[::3]
+'bye'
+>>> s[::-1]
+'elcycib'
+>>> s[::-2]
+'eccb'
+
+# From the FrenchDeck example
+""" Getting all ACE cards
+"""
+>>> deck[12::13]
+[ Card(rank='A', suit='spades'), Card(rank='A', suit='diamonds'), Card(rank='A', suit='clubs'), Card(rank='A', suit='hearts') ]
+
+```
+
+slice lets you assign names to slices, just like spreadsheets allow naming of cell ranges.
+
+```python
+>>> invoice = """
+... 0.....6.................................40........52...55........
+... 1909  Pimoroni PiBrella                     $17.50    3    $52.50
+... 1489  6mm Tactile Switch x20                 $4.95    2     $9.90
+... 1510  Panavise Jr. - PV-201                 $28.00    1    $28.00
+... 1601  PiTFT Mini Kit 320x240                $34.95    1    $34.95
+... """
+>>> UNIT_PRICE = slice(40,52)
+>>> DESC = slice(6,40)
+>>> line_items = invoice.split('\n')[2:]
+>>> for item in line_items:
+...     print(item[UNIT_PRICE], item[DESC])
+...
+$17.50   Pimoroni PiBrella
+$4.95   6mm Tactile Switch x20
+$28.00   Panavise Jr. - PV-201
+$34.95   PiTFT Mini Kit 320x240
+
+```
+
+#### Assigning to Slices
+
+```python
+>>> l = list(range(10))
+>>> l
+[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+>>> l[2:5] = [20, 30]
+>>> l
+[0, 1, 20, 30, 5, 6, 7, 8, 9]
+>>> del l[5:7]
+>>> l
+[0, 1, 20, 30, 5, 8, 9]
+>>> l[3::2] = [11, 22]
+>>> l
+[0, 1, 20, 11, 5, 22, 9]
+```
 
 
+#### += and \*=
+
++= 와 \*= 는 첫번째 operand 에 따라서 다르게 행동한다. += 연산자는 내부적으로 `__iadd__` 라는 스페셜 함수를 호출한다. 그러나 `__iadd__` 가 해당 객체에 정의되어 있지 않으면 Python falls back to calling `__add__`.
+
+```python
+>>> a += b
+```
+
+a 가 일반적인 mutable sequence 면 `a = a + b` 가 되겠지만 a 가 immutable object 이면 `__iadd__` 이 구현하고 있지않으므로 해당 표현은 `a = a + b` 와 같은 효과를 가지지만, `a + b` 가 먼저 evaluated first, producing a new object, which is then bound to `a`. In other words, the identity of the object bound to `a` may or may not change, depending on the availability of `__iadd__`.
+
+```python
+>>> l = [1, 2, 3]
+>>> id(l)
+4311953800
+>>> l * 2
+[1, 2, 3, 1, 2, 3]
+>>> id(l)
+4311953800    # same object
+>>>
+>>> t = (1, 2, 3)
+>>> id(t)
+4312681568
+>>> t *= 2
+>>> id(t)
+4301348296    # a new tuple object was created!!
+```
+
+Repeated concatenation of immutable sequences is inefficient, because instead of just appending new items, the interpreter has to copy the whole target sequence to create a new one with the new items concatenated.
 
 
+#### list.sort and sorted built-in function
+
+list.sort 함수는 새로운 객체를 생성하지 않고 그냥 해당 list 를 소팅해주고 `None` 을 리턴한다. `None` 을 리턴하는 의미는 해당 오퍼레이션이 새로운 객체를 생성하지 않고 target object itself 를 변경했다는 의미이다. 파이썬 컨벤션에서 function 이나 method 가 새로운 객체를 생성하지 않고 target object itself 가 변경될때 `None` 을 리턴해준다. `random.shuffle` 도 동일하게 `None` 을 리턴한다. 이 컨벤션의 단점은 cascade call 을 할수 없다는것? x.sort.shuffle.call 뭐 이런 표현
 
 
+반대로, `sorted` 라는 built-in 함수는 새로운 list 를 생성하고 리턴한다. `sorted` accepts any iterable object as an argument, including immutable sequences and generators. Regardless of the type of iterable given to `sorted`, it always returns a newly created list
 
+```python
+>>> fruits = ['grape', 'raspberry', 'apple', 'banana']
+>>> sorted(fruits)
+['apple', 'banana', 'grape', 'raspberry']
+>>>
+>>> fruits
+['grape', 'raspberry', 'apple', 'banana']
+>>>
+>>>
+>>> sorted(fruits, reverse=True)
+['raspberry', 'grape', 'banana', 'apple']
+>>> sorted(fruits, key=len)
+['grape', 'apple', 'banana', 'raspberry']
+>>> sorted(fruits, key=len, reverse=True)
+['raspberry', 'banana', 'grape', 'apple']
+>>> fruits
+['grape', 'raspberry', 'apple', 'banana']
+>>>
+>>>
+>>> fruits.sort()
+>>> fruits
+['apple', 'banana', 'grape', 'raspberry']
+```
+
+Once the sequences are sorted, they can be very efficeintly searched.
 
 
 
