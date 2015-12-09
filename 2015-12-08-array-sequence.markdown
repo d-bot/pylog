@@ -19,7 +19,7 @@ Mutability 로 sequence 종류를 그룹핑할수 있다.
 ## List Comprehensions and Reaadability
 
 #### SYNTAX TIP
-In Python code, line breaks are ignored inside pairs of [], {}, or (). So you can build multiline lists, listcomps, genexps, dictionaries and the like without using the ugly \ line continuation escape.
+In Python code, line breaks are ignored inside pairs of [], {}, or (). So you can build multiline lists, listcomps, genexps, dictionaries and the like without using the ugly line continuation escape.
 
 리스트 컴프리헨션 사용시 예전에는 표현식의 스코프가 겹쳤는데 3.x 버전부터는 표현식 자신의 local scope 가 있어서 충돌이 일어나지 않는다.
 
@@ -40,7 +40,7 @@ In Python code, line breaks are ignored inside pairs of [], {}, or (). So you ca
 ['A', 'B', 'C']
 >>> x
 'C'
- ```
+```
 
 #### Generator Expressions
 
@@ -49,15 +49,14 @@ Tuples, arrays 등 다른 타입의 시퀀스들을 초기화하는데 listcomp 
 Genexps 는 대괄호가 아니라 일반 괄호로 감싸줘야한다.
 
 ```python
->>> symbols = '$¢£¥€¤'
+>>> symbols = '$%^&'
 >>> tuple( ord(symbol) for symbol in symbols )    # single argument doesn't require parentheses
 (36, 194, 162, 194, 163, 194, 165, 226, 130, 172, 194, 164)
 >>> import array
 >>> array.array( 'I', (ord(symbol) for symbol in symbols) ) # multiple arguments require parentheses
 array('I', [36L, 194L, 162L, 194L, 163L, 194L, 165L, 226L, 130L, 172L, 194L, 164L])
-```
 
-```python
+
 >>> colors = 'black red'.split()
 >>> sizes = ['S', 'M', 'L']
 >>> for tshirt in ('%s %s' % (c, s) for c in colors for s in sizes): # See below explanation
