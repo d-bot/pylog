@@ -10,7 +10,9 @@ categories: Python
 [virtualenv](http://pythoninreal.blogspot.com/2013/12/virtualenv.html)
 [FAQ](http://www.pamno.com/b/most-frequent-python-problems-and-solution-cm578/)
 
-### None
+####
+
+#### None
 Python always return None as the result of a statement unless it explicitly return value
 
 #### + 는 문자열과 리스트만 연결한다.
@@ -35,13 +37,13 @@ str() 과 repr() 는 둘 다 문자열을 생성하지만 보통 그 결과는 �
 >>>
 ```
 
-### List
+#### List
 
 `names = []` 혹은 `names = list()` 와 같이 초기화 한다.
 
 
 
-### Tuple
+#### Tuple
 
 `stock = ('GOOG', 100, 490.10)` 혹은 괄호 없이도 생성 가능 `stock = 'GOOG', 100, 490.10`
 
@@ -56,19 +58,19 @@ host, port = address
 
 리스트가 지원하는 대부분의 연산을 튜플도 지원하지만 한번 생성되고 나면 튜플의 내용은 변경할 수 없다.(즉, 기존 튜플의 요소를 대체, 삭제하거나 새로운 요소를 추가할 수 없다). 다라서 튜플은 항목을 추가하거나 삭제할 수 있는 객체들의 컬렉션이 아니라, 여러 부분으로 이루어진 단일 객체로 보는 것이 더 적절하다. (튜플이 수정이 불가능하므로 메모리 사용량이 적다)
 
-### 사전 (dict)
+#### 사전 (dict)
 
 `prices = {}` 혹은 `prices = dict()` 로 초기화
 
 키 목록을 리스트로 변환 `syms = list(prices)`
 
-### range
+#### range
 
 `range(i,j,보폭)` 은 i - j 까지 x 보폭으로 iteration
 
 매우 큰 범위의 정수를 표현할때는 메모리 소진을 막기 위해서 `range` 는 잘 쓰지 않고 `xrange` 를 사용한다. 파이썬 3 에서는 xrange 가 range 로 변경되었고 예전 range 함수는 없어졌다.
 
-### 함수
+#### 함수
 
 튜플을 이용해서 여러 값을 반환할 수 있다.
 
@@ -97,7 +99,7 @@ def foo():
   count += 1
 ```
 
-### 객체와 클래스
+#### 객체와 클래스
 
 dir() 함수는 객체가 제공하는 메서드들을 나열한다.
 
@@ -145,7 +147,7 @@ class Stack(list) # 파이썬 내장 list 를 상속 (루비의 open class 랑 �
 
 ```
 
-### 장식자
+#### 장식자
 
 ```python
 class EventHandler(object)
@@ -161,7 +163,7 @@ EventHandler.dispatcherThread()
 여기서 @staticmethod 는 바로 다음에 나오는 메서드가 정적 메서드라는 것을 선언한다.(장식자라고 하는데 클래스 메서드처럼 보임)
 
 
-### 예외
+#### 예외
 
 보통 에러는 프로그램을 종료시킨다. 하지만, 다음과 같이 try 와 except 문으로 예외를 잡아서 처리할 수 있다.
 
@@ -196,7 +198,7 @@ with message_lock:
 
 with 문은 보통 파일, 연결, 락 같은 시스템 자원이나 실행 환경과 관련된 객체와 호환된다. 하지만, 사용자 정의 객체를 통해 자신만의 처리 방식을 정의할 수도 있다. 뒤에 컨텍스트 관리 프로토콜에서 자세히 확인.
 
-### 모듈
+#### 모듈
 
 모듈을 생성하려면 관련 문장과 정의들을 모듈과 동일한 이름을 가지는 파일에 넣으면 된다.(파일 확장자가 .py 이어야 한다).
 
@@ -217,7 +219,7 @@ import 문은 새로운 네임스페이스를 생성하고 .py 파일 안에 있
 모듈을 다른 이름으로 임포트하고 싶으면 `import div as foo` 혹은 특정 정의를 현재 네임스페이스에 임포트하려면 from 문을 사용한다. `from div import divide`. 모듈의 모든 내용을 현재 네임스페이스로 가져오려면 `from div import *` 모듈안의 함수들을 확인할땐 div(module) 로 확인 가능.
 
 
-### help
+#### help
 
 대화식 모드 사용시 `help()` 명령을 사용해서 내장 모듈이나 기타 정보를 얻을 수 있다. 특정 모듈에 대한 정보를 얻으려면 `help('module')` 을 입력한다. 특정 함수 사용법 출력은 `__doc__` 을 아래와 같이 이용한다.
 
@@ -234,7 +236,7 @@ is a shortcut for issubclass(X, A) or issubclass(X, B) or ... (etc.).
 
 [cokbook](https://twitter.com/pythoncookbook)
 
-### Write to STDERR
+#### Write to STDERR
 
 ```python
 sys.stderr.write('An error')
@@ -245,7 +247,7 @@ raise SystemExit(1)
 raise SystemExit('An error')
 ```
 
-### Write to a file only if it doesn't exist
+#### Write to a file only if it doesn't exist
 
 ```python
 with open('name', 'xt') as f:
@@ -254,6 +256,6 @@ with open('name', 'xt') as f:
 Exception if file exists.
 ```
 
-### Prefer exceptions over returning none from a function
+#### Prefer exceptions over returning none from a function
 
 
