@@ -61,6 +61,16 @@ map, filter 등은 여전히 존재하는 higher-order 함수들이며 해당 �
 `lambda` 키워드는 익명함수를 생성한다. 그러나 lambda 함수의 body 는 assignment 나 while, try 같은 구문을 사용할 수 없다. 가장 좋은 익명 함수의 사용예는 in the context of an argument list 이다. 아래 예제를 살펴봐라
 
 ```python
+# lambda 예제
+>>> a = lambda x: x ** 2
+>>> a(5)
+25
+>>> b = lambda x, y: x + y
+>>> b(1,2)
+3
+```
+
+```python
 >>> fruits = ['strawberry', 'fig', 'apple', 'cherry', 'raspberry', 'banana']
 >>> sorted(fruits, key=lambda word: word[::-1])
 ['banana', 'apple', 'fig', 'raspberry', 'strawberry', 'cherry']
@@ -188,5 +198,60 @@ The function name
 
 `__qualname__` (str)
 The qualified function name, e.g., Random.choice (see PEP-3155)
+
+
+#### From Positional to Keyword-Only Parameters
+
+One of the best features of Python functions is the extremely flexible parameter handling mechanism, enhanced with keyword-only arguments in Python 3. closely related are the use of \* and \*\* to explode i
+terables and mappings into separate arguments when we call a function.
+
+파이썬3 에서는 함수 파라미터로 키워드를 사용할수 있는데 그 조건은 이전 파라미터가 반드시 튜플 `*arg` 이어야 한다.
+
+```python
+def tag(name, *content, cls=None, **attrs):
+    """Generate one or more HTML tags"""
+    if cls is not None:
+        attrs['class'] = cls
+    if attrs:
+        attr_str = ''.join(' %s="%s"' % (attr, value)
+                           for attr, value
+                           in sorted(attrs.items()))
+    else:
+        attr_str = ''
+    if content:
+        return '\n'.join('<%s%s>%s</%s>' %
+                         (name, attr_str, c, name) for c in content)
+    else:
+        return '<%s%s />' % (name, attr_str)
+
+>>> tag('p', 'hello', id=33)  # id=33 은 dict 로 저장된다
+'<p id="33">hello</p>'
+
+>>> print(tag('p', 'hello', 'world', cls='sidebar')) # cls 키워드를 넘겼고 cls 는 *content 튜플에 포함되지 않는다.
+<p class="sidebar">hello</p>
+<p class="sidebar">world</p>
+
+>>> tag(content='testing', name='img') # content 라는 키워드로 넘겼으나 기존의 튜플 (*content) 에 할당되지 않고 dict 로 저장되었고 name 은 기존의 name 으로 할당되었다.
+'<img content="testing" />'
+
+```
+
+위에서 본것처럼 `cls=None` 이렇게 디폴트 값을 주지 않고 키워드를 사용하려면 `*` 를 키워드 앞에 의미없는 파라미터로 두기만 하면 된다.
+
+```python
+>>> def f(a, *, b):
+...    return a, b
+...
+>>> f(1, b=2)
+(1, 2)
+```
+
+
+
+
+
+
+
+
 
 
