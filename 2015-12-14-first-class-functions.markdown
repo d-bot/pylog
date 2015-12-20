@@ -13,6 +13,7 @@ categories:
 - Passed as an argument to a function
 - Returned as the result of a function
 
+즉, 함수를 다른 함수의 인자로 넘기거나 함수의 리턴 값으로 사용하는것이 가능하며 매우 자연스러운 일이라는 뜻. 함수가 first citizen 인 언어에서는 이를 이용한 다양한 기법들이 있으며 기발한 코딩이 가능하다. (데코레이터도 그중 하나이다)
 
 #### 함수를 객체처럼 다루기
 
