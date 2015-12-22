@@ -210,5 +210,124 @@ def best_promo(order):   4
 #### Variable Scope Rules
 
 
+```python
+b=6
+
+def f3(a):
+  global b  # if global b is not declared, it will perform a lookup for local scope.
+  print(a)
+  print(b)  # This will error out if the global b is not declared since no b is declared in this local scope.
+  b = 9
+
+f3(3)
+#3
+#6
+```
+
+#### Closures
+
+A closure is a function with an extended scope that encompasses non-global varioables referenced in the body of the function but not defined there.  익명 함수이든 아니든 관계없이, 중요한것은 클로저는 함수밖에 정의된 non-global variable 에 접근이 가능하다는 것이다.
+
+Consider an avg function to compute the mean of an ever-increasing series of values; for example, the average closing price of a commodity over its entire history. Every day a new price is added, and the average is computed taking into account all prices so far.
+Starting with a clean slate, this is how avg could be used:
+
+```python
+class Averager():
+  def __init__(self):
+    self.series = []
+
+  def __call__(self, new_value):
+    self.series.append(new_value)
+    total = sum(self.series)
+    return total/len(self.series)
+
+
+# The Averager class creates instances that are callable:
+
+>>> avg = Averager()
+>>> avg(10)
+10.0
+>>> avg(11)
+10.5
+>>> avg(12)
+11.0
+
+```
+
+Higher-order function 식으로 작성한 코드는 아래와 같다.  make_averager 는 averager 함수 객체를 리턴한다.
+
+```python
+def make_averager():
+  series = []
+
+  def averager(new_value):
+    series.append(new_value)
+    total = sum(series)
+    return total/len(series)
+
+  return averager   # averager 서브 함수 객체를 리턴하는데 어떻게 series = [] 에 계속 접근이 가능하지??
+
+>>> avg = make_averager()
+>>> avg(10)
+10.0
+>>> avg(11)
+10.5
+>>> avg(12)
+11.0
+```
+
+`Averager` 클래스는 `avg` 객체를 생성하여 `series` 라는 instance attribute 를 메모리에 유지시키는데, 두번째 예제에서 `avg` 는 어떻게 `series` 를 찾고 접근하는지 알아보자.
+
+두번째 예제에서 `series` 는 `make_averager` 의 local variable 이다. 즉, `series=[]` 는 make_averager 함수 안에서 초기화가 된다. 그러나 `avg(10)` 이 실행되었을때, `make_averager` 는 이미 리턴을 한 상태이고 local scope 역시 이미 없어져버린 상태이다.
+
+두번째 예제에서 `averager` 함수 안에서 `series` 는 `free variable` 이다. 즉 해당 로컬 스코프에 존재하지 않는다는 뜻이다. This is a technical term meaning a variable that is not bound in the local scope.
+
+```
+def make_averager():
+
+-----------------------------------
+|  series = []                    |
+|                                 |
+|  def averager(new_value):       |----------> Closure
+|    series.append(new_value) ----|-----> series: free variable
+|    total = sum(series)          |
+|    return total/len(series)     |
+-----------------------------------
+
+  return averager
+
+```
+
+리턴된 `averager` 함수 객체를 확인해 보면, 어떻게 local variable 과 free variable 이 `__code__` attribute 안에서 표현되는지 볼 수 있다.
+
+```python
+>>> avg = make_averager()
+>>> avg.__code__.co_freevars
+('series',)
+>>> avg.__closure__
+(<cell at 0x10bd9f980: list object at 0x10bd7a908>,)
+>>> avg.__closure__[0].cell_contents
+[]
+>>> avg(10)
+10
+>>> avg(11)
+10
+>>> avg(12)
+11
+>>> avg.__closure__[0].cell_contents
+[10, 11, 12]
+```
+
+To summarize: A closure is a function that retains the bindings of the free variables that exist when the function is defined, so that they can be used later when the function is invoked and the defining scope is no longer available.
+Note that the only situation in which a function may need to deal with external variables that are nonglobal is when it is nested in another function.
+
+#### The nonlocal Declaration
+
+
+
+
+
+
+
 
 
