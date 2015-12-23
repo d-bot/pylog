@@ -325,8 +325,103 @@ Note that the only situation in which a function may need to deal with external 
 
 
 
+```python
+def make_averager():
+    count = 0
+    total = 0
+
+    def averager(new_value):
+        count += 1          # local variable
+        total += new_value  # local variable
+        return total / count
+
+    return averager
+
+#If you try to run, here is what you get:
+>>> avg = make_averager()
+>>> avg(10)
+Traceback (most recent call last):
+  ...
+UnboundLocalError: local variable 'count' referenced before assignment
+>>>
+```
+
+count 와 total 은 `make_averager` 에서 immutable type 즉, integer 로 정의되었다 integer 를 포함한 모든 immutable 타입의 객체에 대해서는 값 `할당(assigning)` 이 되지 않고 위의 예제에서는 count 와 total 은 `averager 안에서 그냥 local variable 로 정의된다.
+
+이전의 예제에서는 `series` 에 아무런 값을 할당하지 않았다. 그저 `series.append` 를 호출하고 sum 과 len 을 이용하였다. So we took advantage of the fact that lists are mutable
+
+But with immutable types like numbers, strings tuples, etc., all you can do is read. but never update.
 
 
+이 문제를 임시로 해결하기 위해서 `nonlocal declaration` 기법이 python 3 에서 소개되었다. It lets you flag a variable as a free variable even when it is assigned a new value within the function. If a new value is assigned to a nonlocal variable, the binding stored in the closure is changed. A correct implementation of our newest make_averager looks as follows
+
+
+
+```python
+def make_averager():
+  count = 0
+  total = 0
+
+  def averager(new_value):
+    nonlocal count, total
+    count +=
+    total += new_value
+    return total / count
+
+  return averager
+```
+
+#### Implementing a Simple Decorator
+
+
+```python
+import time
+
+def clock(func):
+  def clocked(*args):
+    t0 = time.perf_counter()
+    result = func(*args)  # works because the closure for clocked encompasses the func free variable
+    elapsed = time.perf_counter() - t0
+    name = func.__name__
+    arg_str = ', '.join(repr(arg) for arg in args)
+    print('[%8.8fs] %s(%s) -> %r' % (elapsed, name, arg_str, result))
+    return result
+  return clocked  # return the inner function to replace the decorated function
+
+```
+
+coloc 함수를 적절히 사용함.
+
+```python
+import time
+from clockdeco import clock
+
+@clock
+def snooze(seconds):
+  time.sleep(seconds)
+
+@clock
+def factorial(n):
+  return 1 if n < 2 else n*factorial(n-1)
+
+if __name__ == '__main__':
+  print('*' * 48, 'Calling snooze(.123)')
+  snooze(.123)
+  print('*' * 48, 'Calling factorial(6)')
+  print('6! =', factorial(6))
+
+
+#************************************************ Calling snooze(.123)
+#[0.12321678s] snooze(0.123) -> None
+#************************************************ Calling factorial(6)
+#[0.00000261s] factorial(1) -> 1
+#[0.00024416s] factorial(2) -> 2
+#[0.00045513s] factorial(3) -> 6
+#[0.00066262s] factorial(4) -> 24
+#[0.00081329s] factorial(5) -> 120
+#[0.00096144s] factorial(6) -> 720
+#6! = 720
+```
 
 
 
