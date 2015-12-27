@@ -3,7 +3,7 @@ layout: post
 title: "Function Decorators and Closures"
 date: 2015-12-18 09:14:24 +0000
 comments: true
-categories: 
+categories:
 ---
 
 파이썬에서 함수는 first citizen에 속한다. 이 말은 파이썬에서 함수를 다른 함수의 인자로 넘기거나 함수의 리턴 값으로 사용하는 것이 가능하며 매우 자연스러운 일이라는 뜻이다. 함수가 first citizen인 언어에서는 이를 이용한 다양한 기법들이 있으며, 이를 통해 다양하고 기발한 코딩이 가능하다. 여기서 설명하는  데코레이터도 그 중에 하나이다.
@@ -412,16 +412,82 @@ if __name__ == '__main__':
 
 
 #************************************************ Calling snooze(.123)
-#[0.12321678s] snooze(0.123) -> None
+#[0.12321678s] snooze(0.123) -> None      # snooze 에서 None 이 리턴됐음
 #************************************************ Calling factorial(6)
-#[0.00000261s] factorial(1) -> 1
-#[0.00024416s] factorial(2) -> 2
-#[0.00045513s] factorial(3) -> 6
-#[0.00066262s] factorial(4) -> 24
-#[0.00081329s] factorial(5) -> 120
-#[0.00096144s] factorial(6) -> 720
+#[0.00000261s] factorial(1) -> 1          # factorial 에서 1 이 리턴됐음
+#[0.00024416s] factorial(2) -> 2          # factorial 에서 2 이 리턴됐음
+#[0.00045513s] factorial(3) -> 6          # factorial 에서 6 이 리턴됐음
+#[0.00066262s] factorial(4) -> 24         # factorial 에서 24 이 리턴됐음
+#[0.00081329s] factorial(5) -> 120        # factorial 에서 120 이 리턴됐음
+#[0.00096144s] factorial(6) -> 720        # factorial 에서 720 이 리턴됐음
 #6! = 720
 ```
+
+
+```python
+@clock
+def factorial(n):
+  return 1 if n < 2 else n*factorial(n-1)
+```
+
+위의 데코레이터는 아래와 같이 해석된다.
+
+```python
+def factorial(n):
+  return 1 if n < 2 else n*factorial(n-1)
+
+factorial = clock(factorial)
+```
+
+아래와 같이 확인이 가능하다.
+
+```python
+>>> import clockdeco_demo
+>>> clockdeco_demo.factorial.__name__
+'clocked'
+>>>
+```
+
+즉, factorial 은 사실 clocked 함수의 레퍼런스를 가지고 있는것이다. factorial 이 호출될때마다 clocked 가 실행된다. 그리고 위의 예제는 keyword arguments 를 서포트하지 않는다. 다음의 예제는 `functools.wraps` 데코레이터를 이용하여 관련된 attribute 들을 `func` 로부터 `clocked` 로 복사한다.
+
+```python
+import time
+import functools
+
+def clock(func):
+  @functools.wraps(func)
+  def clocked(*args, **kwargs):
+    t0 = time.time()
+    result = func(*args, **kwargs)
+    elapsed = time.time() - t0
+    name = func.__name__
+    arg_lst = []
+    if args:
+      arg_list.append(', '.join(repr(arg) for arg in args))
+    if kwargs:
+      pairs = ['%s=%r' % (k, w) for k, w in sorted(kwargs.items())]
+      arg_lst.append(', '.join(pairs))
+    arg_str = ', '.join(arg_list)
+    print('[%0.8fs] %s(%s) -> %r ' % (elapsed, name, arg_str, result))
+    return result
+  return clocked
+```
+
+
+#### Decorators in the Standard Library
+
+파이썬은 3개의 다른 함수를 decorate 하기 위한 built-in 함수가 있다. `property`, `classmethod` and `staticmethod`.
+```
+
+
+
+
+
+
+
+
+
+
 
 
 
