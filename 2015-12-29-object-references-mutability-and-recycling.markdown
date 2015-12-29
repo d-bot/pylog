@@ -1,7 +1,7 @@
 ---
 layout: post
-title: "Object References"
-date: 2015-12-27 21:45:08 +0000
+title: "Object References Mutability and Recycling"
+date: 2015-12-29 09:36:29 +0000
 comments: true
 categories:
 ---
@@ -294,7 +294,7 @@ True                    # bus2 와 bus3 는 동일한 객체를 가르킨다.
 After running the lines in above example, you can inspect the `HauntedBus.__init__` object and see the ghost students haunting its `__defaults__` attribute:
 
 
-```pyhon
+```python
 >>> dir(HauntedBus.__init__)  # doctest: +ELLIPSIS
 ['__annotations__', '__call__', ..., '__defaults__', ...]
 >>> HauntedBus.__init__.__defaults__
