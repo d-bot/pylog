@@ -312,4 +312,121 @@ To recap, in this and the previous sections, we saw essential methods that you m
 Python 에서는 private 변수를 만들수 없다. What we have in Python is a simple mechanism to prevent accidental overwriting of a private attribute in a subclass.
 
 
+누군가 mood 객체를 외부로 노출시키지 않고 내부적으로만 사용하는 Dog 라는 클래스를 작성하였다. 그리고 Dog 를 상속받아서 Beagle 이라는 서브 클래스를 만들어야 하는 경우(You need to subclass Dog as Beagle) If you create your own mood instance attribute without being aware of the name clash, you will clobber(손실을 가하다) the mood attribute used by the methods inherited from Dog. This would be a pain to debug. (그러니까 Dog 의 mood 객체가 상속되는 Beagle 안에서 사용되면 해당 객체가 손상된다 머 그런 늬앙스)
+
+해당 부작용을 막기 위해서 2개의 밑줄을 이용해 instance attribute 를 이름짓는다. Python stores the name in the instance `__dict__` prefixed with a leading underscore and the class name, so in the Dog class, `__mood` becomes `_Dog__mood` and in Beagle it's `_Beagle__mood`.
+
+```python
+>>> v1 = Vector2d(3, 4)
+>>> v1.__dict__
+{'_Vector2d__y': 4.0, '_Vector2d__x': 3.0}
+>>> v1._Vector2d__x
+3.0
+```
+
+Name mangling is about safety, not security: it's designed to prevent accidental access and not intentional wrongdoing.
+
+Anyone who knows how private names are mangled can read the private attribute directly, as the last line of above example shows - that's actually useful for debugging and serialization. They can also directly assign a value to a private component of a Vector2d by simply writing v1._Vector__x = 7. But if you're doing that in production code, you can't complain if something blows up.
+
+The name mangling functionality is not loved by all Pythonistas, and neither is the skewed(왜곡된 편향된) look of names written as `self.__x`. Some prefer to avoid this syntax and use just one underscore prefix to "protect" attributes by convention (e.g., `self._x`). Critics of the automatic double-underscore mangling suggest that concerns about accidental attribute clobbering should be addressed by naming convention.
+
+
+The single underscore prefix has no special meaning to the Python interpreter when used in attribute names, butg it's a very strong convention among Python programmers that you should not access such attributes from outside the class. It's easy to respect the privacy of an object that marks its attributes with a single `_`. Just as it's easy respect the convention that variables in ALL_CAPS should be treated as constatns.
+
+Attributes with a single `_` prefix are called "protected" in som ecorners of the Python documentation. The practice of "protecting" attributes by convention with the form `self._x` is widespread, but calling that a "protected" attribute is not so common. Some even call that a "private" attribute.
+
+To conclude: the `Vector2d` components are "private" and our Vector2d instances are "immutable" - with scare quotes - because there is no way to make them really private and immutable.
+
+We'll now come back to our Vector2d class. Inm this final section, we cover a special attribute(not a method) that affects the internal storage of an object, with potentially huge impact on the use of memory but little effect on its public inteface: `__slot__`
+
+
+#### Saving Space with the `__slot__` Class Attribute
+
+기본적으로 파이써은 instance attributes 를 객체별로 dict 라는 이름의 `__dict__` 안에 저장한다. 이전 챕터에서 봤듯이 dictionary 컬렉션은 significant memory overhead 가 있다 because of the underlying hash table used to provide fast access. 수백만개의 객체와 적은수의 attribute 를 다뤄야하는 경우(If you are dealing with millions with few attributes) `__slot__` class attribute can save a lot of memory, by letting the interpreter store the instance attributes in a `tuple` instead of a dict.
+
+To define `__slots__`, you create a class attribute with that name and assign it an iterable of `str` with identifiers for the instance attributes. I like to use a tuple for that, because it conveys the message that the `__slots__` definition cannot change.
+
+```python
+class Vector2d:
+  __slots__ = ('__x', '__y')
+
+  typecode = 'd'
+```
+
+클래스에서 `__slot__` 을 정의함으로 you're telling the interpreter: 여기에 이 클래스의 모든 instance attributes 가 있다 라고 지정한다. Python then stores them in a tuple-like structure in each instance, avoiding the memory overhead of the per-instance `__dict__`. 백만개 이상의 객체를 다룰때 해당 기법은 많은 메모리를 절약하게 해준다.
+
+
+TIP: 만약 백만개이상의 숫자 객체(numeric data), NumPy 를 사용하라.
+
+#### The Problem with `__slots__`
+
+To summarize, `__slots__` may provide significant memory savings if properly used, but there are a few caveats
+
+You must remember to redeclare `__slots__` in each subclass, because the inherited attribute is ignored by the interpreter.
+
+Instances will only be able to have the attributes listed in `__slots__`, unless you include `__dict__` in `__slots__` (but doing so may negate the memory savings)
+
+Instances cannot be targets of weak references unless you remember to include '__weakref__` in `__slots__`
+
+If your program is not handling millions of instances, it's probnably not worth the trouble of creating a somewat unusual and tricky class whose instances may not accept dynamic attributes or may not support weak references. Like any optimization, `__slots__` should be used only if justified by a present need and when its benefit is proven by careful profiling.
+
+
+#### Overriding Class Attributes (클래스 변수)
+
+A distinctive feature of Python is how class attributes can be used as default values for instance attributes. In Vector2d there is the typecode class attributes. It's used twice in the `__bytes__` method, but we read it as self.typecode by design. Because Vector2d instances are created without a typecode attribute of their own, self.typecode will get the Vector2d.typecode class attribute by default
+
+But if you write to an instance attribute that does not exist, you create a new instance attribute - e.g., a typecode instance attribute - and the class attribute by the same name is untouched. However, from then on, whenever the code handling that instance reads self.typecode, the instance typecode will be retrieved, effectively shadowing the class attribute by the same name. This opens the possibility of customizing an individual instance with a different typecode.
+
+The default Vector2d.typecode is 'd', meaning each vector component will be represented as an 8-byte double precision float when exporting to bytes. If we set the typecode of a Vector2d instance to `'f' prior to exporting, each component will be exported as a 4-byte single precision float.
+
+```python
+>>> v1 = Vector2d(1.1, 2.2)
+>>> dumpd = bytes(v1)
+>>> dumpd
+b'd\x9a\x99\x99\x99\x99\x99\xf1?\x9a\x99\x99\x99\x99\x99\x01@'
+>>> len(dumpd)        # default bytes representation is 17 bytes long
+17
+>>> v1.typecode = 'f' # set typecode to 'f' in the v1 instance
+>>> dumpf = bytes(v1)
+>>> dumpf
+b'f\xcd\xcc\x8c?\xcd\xcc\x0c@'
+>>> len(dumpf)        # now the bytes dump is 9 bytes long.
+9
+>>> Vector2d.typecode # Vector2d.typecode is unchanged; only the v1 instance uses typecode 'f'
+'d'
+>>>
+```
+
+Now it shoul dbe clear why the bytes export of a Vector2d is prefixed by the typecode: we wanted to support different export formats.
+
+If you want to change a class attribute you must set it on the class directly, not through an instance. You could change the default typecode for all instances (that don't have their own typecode) by dong this:
+
+```python
+>>> Vector2d.typecode = 'f'
+```
+
+However, there is an idiomatic Python way of achieving a more permanent effect, and being more explicit about the change. Because class attributes are public, they are inherited by subclasses, so it's common practice to subclass just to customize a class data attribute.  The Django class-based views use this technique extensively.
+
+```python
+>>> class ShortVector2d(Vector2d):  # Create ShortVector2d as a Vector2d subclass just to overwrite the typecode class attribute
+...     typecode = 'f'
+...
+>>> sv = ShortVector2d(1/11, 1/27)
+>>> sv
+ShortVector2d(0.09090909090909091, 0.037037037037037035)  # Inspect the repr of sv
+>>> len(bytes(sv))                                        # Check that the length of the exported bytes is 9, not 17 as before
+9
+>>>
+```
+
+This example also explains why I did not hardcode the class_name in `Vector2d.__repr__`, but instead got it from `type(self).__name__` like this
+
+```python
+def __repr__(self):
+  class_name = type(self).__name__
+  return '{}({!r}, {!r}'.format(class_name, *self)
+```
+
+If I had hardcoded the class_name, subclasses of Vector2d like ShortVector2d would have to overwrite `__repr__` just to change the class_name. By reading the name from the type of the instance, I made `__repr__` safer to inherit.
+
 
