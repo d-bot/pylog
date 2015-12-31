@@ -6,11 +6,90 @@ comments: true
 categories: Python
 ---
 
-### VirtualEnv
+#### 클래스 변수와 array 모듈?
+
+```python
+from array import array
+
+class Pythonic:
+    typecode = 'd'
+
+    def __init__(self, x=None, y=None):
+        self.x = x
+        self.y = y
+        print('initialized Pythonic class')
+
+    def __repr__(self):
+        return 'Pythonic Object'
+
+    def __bytes__(self):
+        ''' # ord -> 문자의 코드값을 구한다. ord('A') -> A 의 아스키값을 출력 '''
+        return (bytes([ord(self.typecode)]) + bytes(array(self.typecode, self)))
+
+    def __iter__(self):
+        return (i for i in (self.x, self.y))
+
+# 위와 같은 클래스를 test.py 로 저장하고 아래와 같이 파이썬 쉘에서 실행
+
+>>> from test import *
+>>> po = Pythonic(1,2)
+initialized Pythonic class    # 초기화됐다는 메세지
+>>> repr(po)
+'Pythonic Object'
+>>> bytes(po)
+b'd\x00\x00\x00\x00\x00\x00\xf0?\x00\x00\x00\x00\x00\x00\x00@'    # bytes 값은 b 로 시작 b'abc' 뭐 이런식
+>>>
+>>>
+>>>
+>>> array(po.typecode)
+array('d')
+>>> po.typecode         # 객체에서도 typecode 접근가능
+'d'
+>>> Pythonic.typecode   # 클래스변수로도 typecode 접근가능
+'d'
+>>>
+>>> ord(po.typecode)    # d 의 아스키값을 출력
+100
+>>> po.typecode = 'c'   # po 객체내에서 typecode 값 변경
+>>> ord(po.typecode)
+99
+>>> Pythonic.typecode   # 클래스 변수로서 typecode 는 여전히 건재하다. 정대만인가 시발
+'d'
+>>>
+>>>
+>>> array(po.typecode)
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+ValueError: bad typecode (must be b, B, u, h, H, i, I, l, L, q, Q, f or d)
+>>> po.typecode = 'd'   # 다시 d 로 변경. 왜 c 는 안되는거지??
+>>> array(po.typecode)
+array('d')
+>>>
+>>> array(po.typecode, po)
+array('d', [1.0, 2.0])
+>>>
+# 뭐고 시발
+>>>
+>>>
+>>> bytes([ord(po.typecode)]) + bytes(array(po.typecode, po))
+b'd\x00\x00\x00\x00\x00\x00\xf0?\x00\x00\x00\x00\x00\x00\x00@'
+```
+
+Basically, Python lists are very flexible and can hold completely heterogeneous, arbitrary data, and they can be appended to very efficiently, in amortized constant time. If you need to shrink and grow your array time-efficiently and without hassle, they are the way to go. But they use a lot more space than C arrays.
+
+The array.array type, on the other hand, is just a thin wrapper on C arrays. It can hold only homogeneous data, all of the same type, and so it uses only sizeof(one object) * length bytes of memory. Mostly, you should use it when you need to expose a C array to an extension or a system call (for example, ioctl or fctnl). It's also a good way to represent a mutable string (array('B', bytes)) until that actually becomes available in Python 3.0.
+
+However, if you want to do math on a homogeneous array of numeric data, then you're much better off using NumPy, which can automatically vectorize operations on complex multi-dimensional arrays.
+
+To make a long story short: array.array is useful when you need a homogeneous C array of data for reasons other than doing math.
+
+
+
+#### VirtualEnv
+
 [virtualenv](http://pythoninreal.blogspot.com/2013/12/virtualenv.html)
 [FAQ](http://www.pamno.com/b/most-frequent-python-problems-and-solution-cm578/)
 
-####
 
 #### None
 Python always return None as the result of a statement unless it explicitly return value
