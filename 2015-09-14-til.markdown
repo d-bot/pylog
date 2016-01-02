@@ -6,6 +6,16 @@ comments: true
 categories: Python
 ---
 
+#### Tuple 이 immutable 하다는 의미는
+
+`new_tuple = (1,2,[10,20])` 이렇게 안에 mutable 한 item 이 있는 경우에는 해당되지 않는다.
+
+immutable sequence 로는: Tuple, Str and Bytes
+
+위의 컬렉션들은 [] 이런식으로 접근해서 값에 액세스는 가능하지만 값 변경은 되지 않는다.
+
+Integer 는 sequence 가 아님.
+
 #### 클래스 변수와 array 모듈?
 
 ```python

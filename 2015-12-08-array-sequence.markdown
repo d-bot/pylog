@@ -447,7 +447,7 @@ $ python3 insort.py
 
 #### Array
 
-If the list will only contain numbers, an `array.array` is more efficient than a lisT: it supports all mutable sequence operations (including .pop, .insert and .extend) and additional methods for fast loading and saving such as `.frombytes` and `.tofile`
+만약 리스트가 오직 숫자만 포함할거라면 `array.array` 가 `list` 보다 더 효율적이다.: It supports all mutable sequence operations (including .pop, .insert and .extend) and additional methods for fast loading and saving such as `.frombytes` and `.tofile`
 
 파이썬의 `array` 는 C 만큼이나 lean 하다. `array` 를 생성할때, typecode 를 지정해야한다. 예를 들면, `b` is the typecode for signed char. 즉, `array('b')` 를 생성하면, each item will be stored in a single byte and interpreted as an integer from -128 to 127. For large sequences of numbers, this saves a lot of memory and Python will not let you put any number that doesn't match the type for the array.
 
