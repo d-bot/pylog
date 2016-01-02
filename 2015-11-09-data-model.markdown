@@ -116,6 +116,35 @@ Note that although we implemented 4 special methods (aprt from `__init__`), none
 
 ## String Representation
 
+repr(object)은 객체를 출력할 수 있는 문자열 형태로 변환하여 돌려주는 함수이다. 이 변환된 값은 주로 eval 함수의 입력으로 쓰인다. str 함수와의 차이점이라면 str으로 변환된 값은 eval의 입력값이 될 수 없는 경우>가 있다는 것이다. (내부적으로 `__repr__` 을 사용하며 `__repr__` 을 오버라이딩함으로서 변형도 가능한듯)
+
+```python
+>> repr('test')
+"'test'"
+>> str('test')
+'test'
+>> repr(1L)
+'1L'
+>> str(1L)
+'1'
+```
+
+위의 예시에서 repr 은 들어온 문자열을 "" 으로 덧 씌워진다, 즉, 파이썬 인터프리터가 읽을수 있는 문자열(>코드)로 변환한다. (위에서 말한 eval 의 입력값이 될 수 있는 이유이고 python metaprogramming 의 가능성인>듯)
+
+```python
+>>> repr(1)
+'1'
+>>> import os
+>>> repr(os)
+"<module 'os' from '/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/os.pyc'>"
+>>> os
+<module 'os' from '/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/os.pyc'>
+>>> repr(os.system)
+'<built-in function system>'
+>>> os.system
+<built-in function system>
+```
+
 The `__repr__` special method is called by the repr built-in to get the string representation of the object for inspection. If we did not implement `__repr__` an instance would be shown in the console like `<Vector object at 0x10e10070>`.
 
 The interective console and debugger call repr on the results of the expressions evaluated, as does the %r placeholder in classic format with the % operator, and the !r conversion field in the new Format String Syntax used in the str.format method

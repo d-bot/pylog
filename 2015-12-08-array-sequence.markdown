@@ -18,6 +18,8 @@ Mutability 로 sequence 종류를 그룹핑할수 있다.
 
 ## List Comprehensions and Reaadability
 
+`fvalues = [float(line) for line in open(sys.argv[1])]`
+
 #### SYNTAX TIP
 In Python code, line breaks are ignored inside pairs of [], {}, or (). So you can build multiline lists, listcomps, genexps, dictionaries and the like without using the ugly line continuation escape.
 
