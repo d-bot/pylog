@@ -14,37 +14,42 @@ categories:
 from collections import namedtuple
 from random import choice
 
-Card = namedtuple('Card', ['rank', 'suit'])
+Card = namedtuple('Card', ['ranks', 'suits'])
+'''
+Card(ranks='K', suits='spades')
+Card(ranks='A', suits='clubs')
+Card(ranks='A', suits='diamonds')
+Card(ranks='A', suits='hearts')
+Card(ranks='A', suits='spades')
+'''
 
 class FrenchDeck:
-  ranks = [ str(n) for n in range(2, 11) ] + list('JQKA')
-  suits = 'spades diamonds clubs hearts'.split()
+    ranks = [ str(n) for n in range(2, 11) ] + list('JQKA')
+    suits = 'spades diamonds clubs hearts'.split()
 
-  def __init__(self):
-    self._cards = [ Card(rank, suit) for suit in self.suits for rank in self.ranks ]
+    def __init__(self):
+        self._cards = [ Card(rank, suit) for suit in self.suits for rank in self.ranks ]
 
-  def __len__(self):
-    return len(self._cards)
+    def __len__(self):
+        return len(self._cards)
 
-  def __getitem__(self, position):
-    """
-    AttributeError: FrenchDeck instance has no attribute '__getitem__'
-    """
-    return self._cards[position]
+    def __getitem__(self, position):
+        return self._cards[position]
+
 
 deck = FrenchDeck()
-print len(deck)
-print choice(deck)
+irandom_card = choice(deck)
+print("total # of cards: %s" % len(deck))
 
 
 suit_values = dict(spades=3, hearts=2, diamonds=1, clubs=0)
 
 def spades_high(card):
-  rank_index = FrenchDeck.ranks.index(card.ranks)
-  return rank_index * len(suit_values) + suit_values[card.suits]
+    rank_index = FrenchDeck.ranks.index(card.ranks)
+    return rank_index * len(suit_values) + suit_values[card.suits]
 
-for i in sorted(deck, key=spades_high)
-  print i
+for i in sorted(deck, key=spades_high):
+    print(i)
 
 ```
 

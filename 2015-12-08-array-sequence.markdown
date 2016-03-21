@@ -101,6 +101,32 @@ USA/31195855
 USA
 BRA
 ESP
+
+
+##
+## namedtuple 에 대한 실험
+##
+
+
+>>>
+>>> City = namedtuple('city_name', 'name country population coordinates')
+>>> seoul = City('Seoul', 'KR', 24.3331, (10.1, 20.1))
+>>> seoul
+city_name(name='Seoul', country='KR', population=24.3331, coordinates=(10.1, 20.1))
+>>> City._fields
+('name', 'country', 'population', 'coordinates')
+>>>
+>>>
+>>>
+>>> city_name._fields
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+NameError: name 'city_name' is not defined
+>>>
+>>>
+>>>
+
+
 ```
 
 #### Tuple Unpacking

@@ -83,7 +83,7 @@ To confirm that the decorated function is replaced, see the following console se
 def deco(func):
   def inner():
     print('running inner()')
-  return inner  # 즉 func 를 받아서 그거에 다른 코드를 추가해서 inner 를 리턴한다!!!
+  return inner  # 즉 func 라는 함수를 인자로 받았지만 무시하고 inner 라는 함수를 리턴해버린다 !!!
 
 @deco
 def target(): # target is decorated by deco
@@ -139,13 +139,13 @@ if __name__ == '__main__':
     main()  # main() is only invoked if this runs as a script
 
 #$ python registration.py
-#running register(<function f1 at 0x100631bf8>)
-#running register(<function f2 at 0x100631c80>)
-#running main()
-#registry -> [<function f1 at 0x100631bf8>, <function f2 at 0x100631c80>]
-#running f1()
-#running f2()
-#running f3()
+Added <function func1 at 0x1067a00c8> # main() 이 실행되기도 전에 정의되면서 실행되버렸음.
+Added <function func2 at 0x1067a06e0> # main() 이 실행되기도 전에 정의되면서 실행되버렸음.
+runnng main()
+('registry ->', [<function func1 at 0x1067a00c8>, <function func2 at 0x1067a06e0>])
+FUNC 1
+FUNC 2
+FUNC 3
 ```
 
 위의 결과에서 보듯이 `register` 장식자로 장식된 함수 `func1` 과 `func2` 는 정의되면서 바로 실행되어 버렸다. 이렇게 모듈이 로딩된 후, `registry` 배열은 2개의 장식된 함수를 가르키는 레퍼런스를 가지게 된다.

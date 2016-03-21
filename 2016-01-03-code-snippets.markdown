@@ -44,3 +44,34 @@ categories:
 >>> { code: country.upper() for country, code in country_code.items() if code < 66 }
 {1: 'UNITED STATES', 55: 'BRAZIL', 62: 'INDONESIA', 7: 'RUSSIA'}
 ```
+
+#### 2048 merge
+
+```python
+def merge(line):
+    ''' Function that merges a single row or column in 2048. '''
+    slided = move_zeros(line)
+    return merge_dups(slided)
+
+def merge_dups(slided):
+    ''' slide pairs '''
+    for idx, item in enumerate(slided):
+        n_idx = (idx + 1) % len(slided)
+        if n_idx != 0:
+            if item == slided[n_idx]:
+                slided[idx] = item + slided[n_idx]
+                slided.pop(n_idx)  # or del slided[n_idx]
+                slided.append(0)
+
+    return slided
+
+def move_zeros(line):
+    ''' Move 0s at the end of array '''
+    new_line = list(line)
+    for item in line:
+        if item == 0:
+            new_line.remove(0)
+            new_line.append(0)
+
+    return new_line
+```
